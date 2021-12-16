@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd ios
+rm -rf Podfile.lock
+rmdir -rf Pods
+pod install
+cd ..
+flutter clean
+flutter pub get
