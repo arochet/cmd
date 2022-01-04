@@ -214,8 +214,8 @@ echo "Création de $cheminFichierInfra"
 
 # [INFRASTRUCTURE] MIS A JOUR DE FIRESTORE_HELPER
 chemin="./lib/infrastructure/core/firestore_helpers.dart"
-#Vérifie qu'il y a le insert-route
-grep -q "//insert" $chemin
+#Vérifie qu'il y a le insert-collection
+grep -q "//insert-collection" $chemin
 if [ ! $? ]; then
     echo "/!\ Echec ! Pas de insert-collection dans $chemin"
 else
@@ -237,59 +237,62 @@ fi
 ########     APPLICATION    #########
 
 # [APPLICATION] CREATION FORMULAIRE AJOUT
-nomFichierAddObjetNotifier="add_${nomDossier}_form_notifier.dart"
-cheminPageApplication="./lib/application/$nomDossier"
-mkdir -vp $cheminPageApplication
-touch "$cheminPageApplication/$nomFichierAddObjetNotifier"
+read -p 'Voulez vous ajouter un formulaire d ajout ? (y: oui) ' formulaireAjout
+if [ $formulaireAjout = "y" ]; then
+    nomFichierAddObjetNotifier="add_${nomDossier}_form_notifier.dart"
+    cheminPageApplication="./lib/application/$nomDossier"
+    mkdir -vp $cheminPageApplication
+    touch "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-cat $(dirname $0)/fichierdebase/add_objet_form_notifier.dart > "$cheminPageApplication/$nomFichierAddObjetNotifier"
-sed -i -e "s~AZER~$nomClasse~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-sed -i -e "s~azer~$nomObjet~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-sed -i -e "s~az_er~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-sed -i -e "s~insert_freezed~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+    cat $(dirname $0)/fichierdebase/add_objet_form_notifier.dart > "$cheminPageApplication/$nomFichierAddObjetNotifier"
+    sed -i -e "s~AZER~$nomClasse~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+    sed -i -e "s~azer~$nomObjet~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+    sed -i -e "s~az_er~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+    sed -i -e "s~insert_freezed~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-# Ajout d'un système 
-for i in "${listParams[@]}"
-do
-    #Code paramChanged(String param)
-    parametre=`toSpace $i`
-    array=($parametre)
-    typevariableparametre=`classeToDTOParam ${array[0]}`
-    valueChanged=${array[0]}
-    case ${array[0]} in 
-        "String" | "int")
-            valueChanged="param"
-            ;;
-        "Nom" | "Description" | "EmailAddress" | "Password")
-            valueChanged="${array[0]}(param)"
-            ;;
-        "UniqueId")
-            valueChanged="UniqueId.fromUniqueString(param)"
-            ;;
-        "DateTime")
-            valueChanged="DateTime.fromMillisecondsSinceEpoch(param)"
-            ;;
-        "State")
-            valueChanged="State.fromString(param)"
-            ;;
-        *)
-            valueChanged="${array[0]}(param)"
-            ;;
-    esac
-    paramChanged="${array[1]}Changed($typevariableparametre param) {state = state.copyWith($nomObjet: state.$nomObjet.copyWith(${array[1]}: $valueChanged),authFailureOrSuccessOption: none());}\n//insert-changed"
-    sed -i -e "s~//insert-changed~$paramChanged~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-    #final isTitreValid = state.maGazolina.titre.isValid();
-    if [ ${array[0]} = "Nom" ] || [ ${array[0]} = "Description" ] || [ ${array[0]} = "EmailAddress" ] || [ ${array[0]} = "Password" ]; then
-        codeParamValid="final is${array[1]}Valid = state.$nomObjet.${array[1]}.isValid();\n//insert-valid-params"
-        codeCondition="/* insert-valid-condition */ || is${array[1]}Valid"
-        sed -i -e "s~//insert-valid-params~$codeParamValid~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-        sed -i -e "s~/\* insert-valid-condition \*/~$codeCondition~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-    fi
-done
+    # Ajout d'un système 
+    for i in "${listParams[@]}"
+    do
+        #Code paramChanged(String param)
+        parametre=`toSpace $i`
+        array=($parametre)
+        typevariableparametre=`classeToDTOParam ${array[0]}`
+        valueChanged=${array[0]}
+        case ${array[0]} in 
+            "String" | "int")
+                valueChanged="param"
+                ;;
+            "Nom" | "Description" | "EmailAddress" | "Password")
+                valueChanged="${array[0]}(param)"
+                ;;
+            "UniqueId")
+                valueChanged="UniqueId.fromUniqueString(param)"
+                ;;
+            "DateTime")
+                valueChanged="DateTime.fromMillisecondsSinceEpoch(param)"
+                ;;
+            "State")
+                valueChanged="State.fromString(param)"
+                ;;
+            *)
+                valueChanged="${array[0]}(param)"
+                ;;
+        esac
+        paramChanged="${array[1]}Changed($typevariableparametre param) {state = state.copyWith($nomObjet: state.$nomObjet.copyWith(${array[1]}: $valueChanged),authFailureOrSuccessOption: none());}\n//insert-changed"
+        sed -i -e "s~//insert-changed~$paramChanged~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-echo "Creation de $cheminPageApplication/$nomFichierAddObjetNotifier"
+        #final isTitreValid = state.maGazolina.titre.isValid();
+        if [ ${array[0]} = "Nom" ] || [ ${array[0]} = "Description" ] || [ ${array[0]} = "EmailAddress" ] || [ ${array[0]} = "Password" ]; then
+            codeParamValid="final is${array[1]}Valid = state.$nomObjet.${array[1]}.isValid();\n//insert-valid-params"
+            codeCondition="/* insert-valid-condition */ || is${array[1]}Valid"
+            sed -i -e "s~//insert-valid-params~$codeParamValid~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+            sed -i -e "s~/\* insert-valid-condition \*/~$codeCondition~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+        fi
+    done
 
+    echo "Creation de $cheminPageApplication/$nomFichierAddObjetNotifier"
+fi
 
 
 
@@ -297,46 +300,47 @@ echo "Creation de $cheminPageApplication/$nomFichierAddObjetNotifier"
 
 ########     PRESENTATION    #########
 
-# [PRESENTATION] FORM D'AJOUT
 mkdir $nomDossier
-mkdir "$nomDossier/${nomDossier}_add"
-nouvellepage.sh "$1-add" "./$nomDossier"
-code="${nomClasse}FormProvider()"
-chemin="./lib/presentation/$nomDossier/${nomDossier}_add/${nomDossier}_add.dart"
-sed -i -e "s~Text('insert-code')~$code~g" $chemin
-echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
+# [PRESENTATION] FORM D'AJOUT
+if [ $formulaireAjout = "y" ]; then
+    mkdir "$nomDossier/${nomDossier}_add"
+    nouvellepage.sh "$1-add" "./$nomDossier"
+    code="${nomClasse}FormProvider()"
+    chemin="./lib/presentation/$nomDossier/${nomDossier}_add/${nomDossier}_add.dart"
+    sed -i -e "s~Text('insert-code')~$code~g" $chemin
+    echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
 
-# Formulaire
-fichierForm="./lib/presentation/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
-touch $fichierForm
-cat $(dirname $0)/fichierdebase/objet_form.dart > $fichierForm
-for i in "${listParams[@]}"
-do
-    #Code paramChanged(String param)
-    parametre=`toSpace $i`
-    array=($parametre)
-    typevariableparametre=`classeToDTOParam ${array[0]}`
+    # Formulaire
+    fichierForm="./lib/presentation/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
+    touch $fichierForm
+    cat $(dirname $0)/fichierdebase/objet_form.dart > $fichierForm
+    for i in "${listParams[@]}"
+    do
+        #Code paramChanged(String param)
+        parametre=`toSpace $i`
+        array=($parametre)
+        typevariableparametre=`classeToDTOParam ${array[0]}`
 
-    case ${array[0]} in 
-        "String" | "int" | "UniqueId" | "DateTime")
-            ;;
-        *)
-            code=`cat $(dirname $0)/fichierdebase/objet_form_field.dart`
-            KEYWORD="//insert-field-complete"
-            ESCAPED_KEYWORD=$(printf '%s\n' "$KEYWORD" | sed -e 's/[]\/$*.^[]/\\&/g');
-            ESCAPED_REPLACE=$(printf '%s\n' "$code" | sed -e 's/[]\/$*.^[]/\\&/g');
-            ESCAPED_REPLACE="${ESCAPED_REPLACE//[$'\t\r\n']}"
-            sed -i -e "s/$ESCAPED_KEYWORD/$ESCAPED_REPLACE/g" $fichierForm
-            sed -i -e "s~insert-field-name~${array[1]}~g" $fichierForm
-            ;;
-    esac
-done
-sed -i -e "s~AZER~$nomClasse~g" $fichierForm
-sed -i -e "s~azer~$nomObjet~g" $fichierForm
-sed -i -e "s~az_er~$nomDossier~g" $fichierForm
+        case ${array[0]} in 
+            "String" | "int" | "UniqueId" | "DateTime")
+                ;;
+            *)
+                code=`cat $(dirname $0)/fichierdebase/objet_form_field.dart`
+                KEYWORD="//insert-field-complete"
+                ESCAPED_KEYWORD=$(printf '%s\n' "$KEYWORD" | sed -e 's/[]\/$*.^[]/\\&/g');
+                ESCAPED_REPLACE=$(printf '%s\n' "$code" | sed -e 's/[]\/$*.^[]/\\&/g');
+                ESCAPED_REPLACE="${ESCAPED_REPLACE//[$'\t\r\n']}"
+                sed -i -e "s/$ESCAPED_KEYWORD/$ESCAPED_REPLACE/g" $fichierForm
+                sed -i -e "s~insert-field-name~${array[1]}~g" $fichierForm
+                ;;
+        esac
+    done
+    sed -i -e "s~AZER~$nomClasse~g" $fichierForm
+    sed -i -e "s~azer~$nomObjet~g" $fichierForm
+    sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 
-echo "Creation de $fichierForm"
-
+    echo "Creation de $fichierForm"
+fi
 
 # [PRESENTATION] AFFICHAGE LIST
 mkdir "$nomDossier/${nomDossier}_list"
@@ -426,8 +430,10 @@ then
     sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
     code="final ${nomObjet}RepositoryProvider = Provider<I${nomClasse}Repository>((ref) => getIt<I${nomClasse}Repository>()); \n\n //insert-provider"
     sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
-    code="final ${nomObjet}FormNotifierProvider = \nStateNotifierProvider.autoDispose<${nomClasse}FormNotifier, Add${nomClasse}FormData>(\n(ref) => ${nomClasse}FormNotifier(ref.watch(${nomObjet}RepositoryProvider)),\n);\n\n//insert-provider"
-    sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
+    if [ $formulaireAjout = "y" ]; then
+        code="final ${nomObjet}FormNotifierProvider = \nStateNotifierProvider.autoDispose<${nomClasse}FormNotifier, Add${nomClasse}FormData>(\n(ref) => ${nomClasse}FormNotifier(ref.watch(${nomObjet}RepositoryProvider)),\n);\n\n//insert-provider"
+        sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
+    fi
     code="final all${nomClasse}Provider = StreamProvider.autoDispose<Either<${nomClasse}Failure, List<${nomClasse}>>>((ref) => ref.watch(${nomObjet}RepositoryProvider).watch());\n\n//insert-provider"
     sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
     code="final one${nomClasse}Provider = FutureProvider.autoDispose.family<Either<${nomClasse}Failure, ${nomClasse}>, UniqueId>((ref, id) => ref.watch(${nomObjet}RepositoryProvider).watchWithId(id));\n\n//insert-provider"
