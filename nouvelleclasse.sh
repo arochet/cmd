@@ -56,6 +56,7 @@ if [ $# -ne "1" ]; then
 fi
 
 #Remplir les nom de la classe
+echo "Ex : Nom-nom DateTime-datelimite String-surnom UniqueId-idParent"
 param="a"
 # listParams=(Nom-nom Nom-prenom DateTime-datedenaissance String-jesaispas UniqueId-proprio)
 listParams=()
