@@ -453,4 +453,11 @@ rm -f ./lib/presentation/$nomDossier/${nomDossier}_view/*.dart-e
 rm -f ./lib/presentation/$nomDossier/${nomDossier}_view/widget/*.dart-e
 rm -f ./lib/*.dart-e
 
+
+echo "##############################"
+echo "1. Changez 'base_de_projet' par le nom du projet"
+echo "2. Faire les imports dans presentation/core/router"
+echo "3. gogo !"
+echo "##############################"
+
 #flutter pub run build_runner build --delete-conflicting-outputs
