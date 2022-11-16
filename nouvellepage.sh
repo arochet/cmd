@@ -35,7 +35,7 @@ fi
 
 #AJOUT DU ROUTER
 cheminFichierRef="$(dirname $0)/fichierdebase/nouvelleroute.dart"
-cheminRouter="./lib/presentation/core/_core/_core/router.dart"
+cheminRouter="./lib/presentation/core/_core/router.dart"
 codeRoute=`cat $cheminFichierRef | tr -d '\n'`
 codeRoute="$codeRoute //insert-route"
 
