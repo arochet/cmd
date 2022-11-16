@@ -2,8 +2,8 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:base_de_projet/application/auth/register_form_notifier.dart';
 import 'package:base_de_projet/presentation/auth/widget/flushbar_auth_failure.dart';
 import 'package:base_de_projet/application/az_er/add_az_er_form_notifier.dart';
-import 'package:base_de_projet/presentation/core/router.dart';
-import 'package:base_de_projet/presentation/core/theme_button.dart';
+import 'package:base_de_projet/presentation/core/_core/router.dart';
+import 'package:base_de_projet/presentation/core/_core/theme_button.dart';
 import 'package:base_de_projet/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,8 +17,7 @@ class AZERFormProvider extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AddAZERFormData>(azerFormNotifierProvider,
-        (prev, myRegisterState) {
+    ref.listen<AddAZERFormData>(azerFormNotifierProvider, (prev, myRegisterState) {
       myRegisterState.authFailureOrSuccessOption.fold(
           () {},
           (either) => either.fold((failure) {
@@ -28,8 +27,7 @@ class AZERFormProvider extends ConsumerWidget {
                   icon: const Icon(Icons.warning),
                   messageColor: Colors.red,
                   message: failure.map(
-                      insufficientPermission: (_) =>
-                          AppLocalizations.of(context)!.permissioninsuffisante,
+                      insufficientPermission: (_) => AppLocalizations.of(context)!.permissioninsuffisante,
                       unableToUpdate: (_) => "Unable to update",
                       unexpected: (_) => "Unexpected"),
                 ).show(context);
@@ -54,33 +52,28 @@ class AZERForm extends ConsumerWidget {
     ref.watch(azerFormNotifierProvider);
     return Form(
       autovalidateMode: AutovalidateMode.always,
-      child: ListView(
-          padding: const EdgeInsets.all(18),
-          shrinkWrap: true,
-          children: [
-            const SizedBox(height: 8),
-            //insert-field-complete
-            const SizedBox(height: 14),
-            Align(
-              child: Container(
-                width: 200,
-                child: ElevatedButton(
-                  onPressed: () {
-                    ref
-                        .read(azerFormNotifierProvider.notifier)
-                        .addAZERPressed();
-                  },
-                  style: buttonNormalConfirm,
-                  child: const Text("Ajout"),
-                ),
-              ),
+      child: ListView(padding: const EdgeInsets.all(18), shrinkWrap: true, children: [
+        const SizedBox(height: 8),
+        //insert-field-complete
+        const SizedBox(height: 14),
+        Align(
+          child: Container(
+            width: 200,
+            child: ElevatedButton(
+              onPressed: () {
+                ref.read(azerFormNotifierProvider.notifier).addAZERPressed();
+              },
+              style: buttonNormalConfirm,
+              child: const Text("Ajout"),
             ),
-            const SizedBox(height: 12),
-            if (ref.read(azerFormNotifierProvider).isSubmitting) ...[
-              const SizedBox(height: 8),
-              const LinearProgressIndicator(value: null)
-            ]
-          ]),
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (ref.read(azerFormNotifierProvider).isSubmitting) ...[
+          const SizedBox(height: 8),
+          const LinearProgressIndicator(value: null)
+        ]
+      ]),
     );
   }
 }

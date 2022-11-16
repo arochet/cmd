@@ -1,11 +1,11 @@
 import 'package:base_de_projet/domain/az_er/az_er.dart';
 import 'package:base_de_projet/presentation/components/default_panel.dart';
 import 'package:flutter/material.dart';
-import 'package:base_de_projet/presentation/core/theme_button.dart';
+import 'package:base_de_projet/presentation/core/_core/theme_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:base_de_projet/presentation/core/theme_colors.dart';
+import 'package:base_de_projet/presentation/core/_core/theme_colors.dart';
 import 'package:auto_route/src/router/auto_router_x.dart';
-import 'package:base_de_projet/presentation/core/router.gr.dart';
+import 'package:base_de_projet/presentation/core/_core/router.gr.dart';
 
 class PanelAZERView extends StatelessWidget {
   final AZER azer;

@@ -35,7 +35,7 @@ fi
 
 #AJOUT DU ROUTER
 cheminFichierRef="$(dirname $0)/fichierdebase/nouvelleroute.dart"
-cheminRouter="./lib/presentation/core/_core/router.dart"
+cheminRouter="./lib/presentation/core/_core/_core/router.dart"
 codeRoute=`cat $cheminFichierRef | tr -d '\n'`
 codeRoute="$codeRoute //insert-route"
 
@@ -77,7 +77,7 @@ echo "Ajout du code dans la page principale"
 
 #Nettoyage
 rm -f $cheminPage/*.dart-e
-rm -f ./lib/presentation/core/*.dart-e
+rm -f ./lib/presentation/core/_core/*.dart-e
 echo "Nettoyage des fichiers dart-e"
 
 #flutter pub run build_runner build --delete-conflicting-outputs

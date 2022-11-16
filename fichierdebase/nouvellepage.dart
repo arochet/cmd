@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:base_de_projet/presentation/components/main_scaffold.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:base_de_projet/presentation/core/theme_colors.dart';
+import 'package:base_de_projet/presentation/core/_core/theme_colors.dart';
 import 'package:base_de_projet/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
