@@ -58,7 +58,7 @@ fi
 
 
 
-# CREATION DE LA PAGE
+# CREATION DE LA PAGE DANS PRESENTATION
 cheminPage="./lib/presentation/$2/$nomDossier"
 if [ ! $2 ]; then
     cheminPage="./lib/presentation/$nomDossier"

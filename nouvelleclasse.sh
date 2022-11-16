@@ -439,6 +439,7 @@ then
     code="final one${nomClasse}Provider = FutureProvider.autoDispose.family<Either<${nomClasse}Failure, ${nomClasse}>, UniqueId>((ref, id) => ref.watch(${nomObjet}RepositoryProvider).watchWithId(id));\n\n//insert-provider"
     sed -i -e "s~//insert-provider~$code~g" "./lib/providers.dart"
 fi
+
 # Nettoyage
 rm -f $cheminPageDomain/*.dart-e
 rm -f $cheminPageInfra/*.dart-e
@@ -454,10 +455,11 @@ rm -f ./lib/presentation/$nomDossier/${nomDossier}_view/widget/*.dart-e
 rm -f ./lib/*.dart-e
 
 
-echo "##############################"
+echo "##################################################"
 echo "1. Changez 'base_de_projet' par le nom du projet"
 echo "2. Faire les imports dans presentation/core/router"
-echo "3. gogo !"
-echo "##############################"
+echo "3. lancer la commande gogo (flutter build runner)"
+echo "4. Faire les imports dans provider.dart"
+echo "##################################################"
 
 #flutter pub run build_runner build --delete-conflicting-outputs
