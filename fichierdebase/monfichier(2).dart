@@ -16,7 +16,7 @@ import 'package:justdoit/presentation/auth/auth_reset_password.dart/auth_reset_p
 import 'package:justdoit/presentation/autre/autre_page.dart';
 import 'package:justdoit/presentation/home/home_page.dart';
 import 'package:justdoit/presentation/main_navigation/main_navigation_page.dart';
-import 'package:justdoit/presentation/splash/splash_page.dart';
+import 'package:justdoit/presentation/core/_splash/splash_page.dart';
 
 import 'router.gr.dart';
 

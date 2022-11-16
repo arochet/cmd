@@ -1,4 +1,4 @@
-import 'package:base_de_projet/presentation/components/main_scaffold.dart';
+import 'package:base_de_projet/presentation/core/_components/main_scaffold.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:base_de_projet/application/az_er/add_az_er_form_notifier.dart';
 import 'package:base_de_projet/presentation/core/_core/theme_button.dart';

@@ -11,10 +11,10 @@ read -p 'Entrez la traduction Anglaise : ' anglais
 txtfinalfr="\"$1\":\"$francais\",\n\t\"insert\" : \"insert\""
 txtfinalen="\"$1\":\"$anglais\",\n\t\"insert\" : \"insert\""
 
-chemin="./lib/presentation/l10n/app_fr.arb"
+chemin="./lib/presentation/core/_l10n/app_fr.arb"
 sed -i -e "s~\"insert\" : \"insert\"~$txtfinalfr~g" "$chemin"
 
-chemin="./lib/presentation/l10n/app_en.arb"
+chemin="./lib/presentation/core/_l10n/app_en.arb"
 sed -i -e "s~\"insert\" : \"insert\"~$txtfinalen~g" "$chemin"
 
-rm -f ./lib/presentation/l10n/*.arb-e
+rm -f ./lib/presentation/core/_l10n/*.arb-e

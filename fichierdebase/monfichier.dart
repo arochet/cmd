@@ -16,7 +16,7 @@ import 'package:base_de_projet/presentation/auth/auth_reset_password.dart/auth_r
 import 'package:base_de_projet/presentation/autre/autre_page.dart';
 import 'package:base_de_projet/presentation/home/home_page.dart';
 import 'package:base_de_projet/presentation/main_navigation/main_navigation_page.dart';
-import 'package:base_de_projet/presentation/splash/splash_page.dart';
+import 'package:base_de_projet/presentation/core/_splash/splash_page.dart';
 
 import 'router.gr.dart';
 

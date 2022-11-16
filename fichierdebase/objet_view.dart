@@ -1,8 +1,8 @@
 import 'package:base_de_projet/domain/core/value_objects.dart';
 
 import 'widget/panel_az_er_view.dart';
-import 'package:base_de_projet/presentation/components/main_scaffold.dart';
-import 'package:base_de_projet/presentation/components/spacing.dart';
+import 'package:base_de_projet/presentation/core/_components/main_scaffold.dart';
+import 'package:base_de_projet/presentation/core/_components/spacing.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:base_de_projet/application/az_er/add_az_er_form_notifier.dart';
 import 'package:base_de_projet/presentation/core/_core/theme_button.dart';
