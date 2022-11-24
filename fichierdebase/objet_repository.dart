@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 import 'package:dartz/dartz.dart';
-import 'package:base_de_projet/infrastructure/core/firestore_helpers.dart';
-import 'package:base_de_projet/domain/az_er/az_er.dart';
-import 'package:base_de_projet/domain/az_er/az_er_failure.dart';
-import 'package:base_de_projet/domain/core/value_objects.dart';
+import 'package:base_de_projet/INFRASTRUCTURE/core/firestore_helpers.dart';
+import 'package:base_de_projet/DOMAIN/az_er/az_er.dart';
+import 'package:base_de_projet/DOMAIN/az_er/az_er_failure.dart';
+import 'package:base_de_projet/DOMAIN/core/value_objects.dart';
 import 'az_er_dtos.dart';
 
 abstract class IAZERRepository {
@@ -44,8 +44,8 @@ class AZERRepository implements IAZERRepository {
     } on FirebaseException catch (e) {
       if (e.message!.contains('permission-denied')) {
         return left(const AZERFailure.insufficientPermission());
-      } else if (e.message!.contains(
-          'The caller does not have permission to execute the specified operation')) {
+      } else if (e.message!
+          .contains('The caller does not have permission to execute the specified operation')) {
         return left(const AZERFailure.insufficientPermission());
       } else {
         return left(const AZERFailure.unexpected());

@@ -1,6 +1,6 @@
-import 'package:base_de_projet/domain/core/value_objects.dart';
-import 'package:base_de_projet/domain/auth/value_objects.dart';
-import 'package:base_de_projet/domain/nom_fichier/nom_fichier.dart';
+import 'package:base_de_projet/DOMAIN/core/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/auth/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/nom_fichier/nom_fichier.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'objet-freezed-dtos.freezed.dart';
@@ -29,12 +29,9 @@ abstract class AZERDTO implements _$AZERDTO {
     );
   }
 
-  factory AZERDTO.fromJson(Map<String, dynamic> json) =>
-      _$AZERDTOFromJson(json);
+  factory AZERDTO.fromJson(Map<String, dynamic> json) => _$AZERDTOFromJson(json);
 
   factory AZERDTO.fromFirestore(DocumentSnapshot doc) {
-    return AZERDTO
-        .fromJson(doc.data() as Map<String, dynamic>)
-        .copyWith(id: doc.id);
+    return AZERDTO.fromJson(doc.data() as Map<String, dynamic>).copyWith(id: doc.id);
   }
 }

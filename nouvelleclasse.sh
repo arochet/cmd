@@ -77,7 +77,7 @@ printf '%s\n' "${listParams[@]}"
 ########     DOMAIN    #########
 
 # [DOMAIN] CREATION DE LA CLASSE
-cheminPageDomain="./lib/domain/$nomDossier"
+cheminPageDomain="./lib/DOMAIN/$nomDossier"
 mkdir -vp $cheminPageDomain
 touch "$cheminPageDomain/$nomFichier"
 
@@ -124,7 +124,7 @@ echo "Création de $cheminPageDomain/$nomFichier"
 
 # [DOMAIN] CREATION CLASSE FAILURE
 nomFichierFailure="${nomDossier}_failure.dart"
-cheminPageDomain="./lib/domain/$nomDossier"
+cheminPageDomain="./lib/DOMAIN/$nomDossier"
 touch "$cheminPageDomain/$nomFichierFailure"
 
 cat $(dirname $0)/fichierdebase/objet_failures.dart > "$cheminPageDomain/$nomFichierFailure"
@@ -134,7 +134,7 @@ echo "Création de $cheminPageDomain/$nomFichierFailure"
 
 # [DOMAIN] CREATION CLASSE VALUE_OBJECT
 nomFichierFailure="value_objects.dart"
-cheminPageDomain="./lib/domain/$nomDossier"
+cheminPageDomain="./lib/DOMAIN/$nomDossier"
 touch "$cheminPageDomain/$nomFichierFailure"
 
 
@@ -142,7 +142,7 @@ touch "$cheminPageDomain/$nomFichierFailure"
 ########     INFRASTRUCTURE    #########
 
 # [INFRASTRUCTURE] CREATION DU DTO
-cheminPageInfra="./lib/infrastructure/$nomDossier"
+cheminPageInfra="./lib/INFRASTRUCTURE/$nomDossier"
 cheminFichierInfra="$cheminPageInfra/${nomDossier}_dtos.dart"
 mkdir -vp $cheminPageInfra
 touch $cheminFichierInfra
@@ -213,7 +213,7 @@ sed -i -e "s~az_er~$nomDossier~g" $cheminFichierInfra
 echo "Création de $cheminFichierInfra"
 
 # [INFRASTRUCTURE] MIS A JOUR DE FIRESTORE_HELPER
-chemin="./lib/infrastructure/core/firestore_helpers.dart"
+chemin="./lib/INFRASTRUCTURE/core/firestore_helpers.dart"
 #Vérifie qu'il y a le insert-collection
 grep -q "//insert-collection" $chemin
 if [ ! $? ]; then
@@ -240,7 +240,7 @@ fi
 read -p 'Voulez vous ajouter un formulaire d ajout ? (y: oui) ' formulaireAjout
 if [ $formulaireAjout = "y" ]; then
     nomFichierAddObjetNotifier="add_${nomDossier}_form_notifier.dart"
-    cheminPageApplication="./lib/application/$nomDossier"
+    cheminPageApplication="./lib/APPLICATION/$nomDossier"
     mkdir -vp $cheminPageApplication
     touch "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
@@ -306,12 +306,12 @@ if [ $formulaireAjout = "y" ]; then
     mkdir "$nomDossier/${nomDossier}_add"
     nouvellepage.sh "$1-add" "./$nomDossier"
     code="${nomClasse}FormProvider()"
-    chemin="./lib/presentation/$nomDossier/${nomDossier}_add/${nomDossier}_add.dart"
+    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/${nomDossier}_add.dart"
     sed -i -e "s~Text('insert-code')~$code~g" $chemin
     echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
 
     # Formulaire
-    fichierForm="./lib/presentation/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
+    fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
     touch $fichierForm
     cat $(dirname $0)/fichierdebase/objet_form.dart > $fichierForm
     for i in "${listParams[@]}"
@@ -345,7 +345,7 @@ fi
 # [PRESENTATION] AFFICHAGE LIST
 mkdir "$nomDossier/${nomDossier}_list"
 nouvellepage.sh "$1-list" "./$nomDossier"
-chemin="./lib/presentation/$nomDossier/${nomDossier}_list/${nomDossier}_list.dart"
+chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/${nomDossier}_list.dart"
 cat $(dirname $0)/fichierdebase/objet_list.dart > $chemin
 echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
 sed -i -e "s~AZER~$nomClasse~g" $chemin
@@ -353,7 +353,7 @@ sed -i -e "s~azer~$nomObjet~g" $chemin
 sed -i -e "s~az_er~$nomDossier~g" $chemin
 
 # List
-fichierForm="./lib/presentation/$nomDossier/${nomDossier}_list/widget/panel_${nomDossier}_view.dart"
+fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/widget/panel_${nomDossier}_view.dart"
 touch $fichierForm
 cat $(dirname $0)/fichierdebase/panel_objet_view_compact.dart > $fichierForm
 
@@ -385,7 +385,7 @@ sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 # [PRESENTATION] AFFICHAGE DETAIL D'UN ELEMENT
 mkdir "$nomDossier/${nomDossier}_view"
 nouvellepage.sh "$1-view" "./$nomDossier"
-chemin="./lib/presentation/$nomDossier/${nomDossier}_view/${nomDossier}_view.dart"
+chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/${nomDossier}_view.dart"
 cat $(dirname $0)/fichierdebase/objet_view.dart > $chemin
 echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
 sed -i -e "s~AZER~$nomClasse~g" $chemin
@@ -393,7 +393,7 @@ sed -i -e "s~azer~$nomObjet~g" $chemin
 sed -i -e "s~az_er~$nomDossier~g" $chemin
 
 # view
-fichierForm="./lib/presentation/$nomDossier/${nomDossier}_view/widget/panel_${nomDossier}_view.dart"
+fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/widget/panel_${nomDossier}_view.dart"
 touch $fichierForm
 cat $(dirname $0)/fichierdebase/panel_objet_view_detail.dart > $fichierForm
 
@@ -444,14 +444,14 @@ fi
 rm -f $cheminPageDomain/*.dart-e
 rm -f $cheminPageInfra/*.dart-e
 rm -f $cheminPageApplication/*.dart-e
-rm -f ./lib/infrastructure/core/*.dart-e
-rm -f ./lib/presentation/$nomDossier/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_add/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_add/widget/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_list/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_list/widget/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_view/*.dart-e
-rm -f ./lib/presentation/$nomDossier/${nomDossier}_view/widget/*.dart-e
+rm -f ./lib/INFRASTRUCTURE/core/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_add/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_add/widget/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_list/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_list/widget/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_view/*.dart-e
+rm -f ./lib/PRESENTATION/$nomDossier/${nomDossier}_view/widget/*.dart-e
 rm -f ./lib/*.dart-e
 
 

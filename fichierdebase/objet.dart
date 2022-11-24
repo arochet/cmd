@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:base_de_projet/domain/core/value_objects.dart';
-import 'package:base_de_projet/domain/auth/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/core/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/auth/value_objects.dart';
 
 part 'objet-freezed.freezed.dart';
 

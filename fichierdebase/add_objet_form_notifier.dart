@@ -1,11 +1,11 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:base_de_projet/domain/core/value_objects.dart';
-import 'package:base_de_projet/domain/auth/value_objects.dart';
-import 'package:base_de_projet/domain/az_er/az_er.dart';
-import 'package:base_de_projet/domain/az_er/az_er_failure.dart';
-import 'package:base_de_projet/infrastructure/az_er/az_er_repository.dart';
+import 'package:base_de_projet/DOMAIN/core/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/auth/value_objects.dart';
+import 'package:base_de_projet/DOMAIN/az_er/az_er.dart';
+import 'package:base_de_projet/DOMAIN/az_er/az_er_failure.dart';
+import 'package:base_de_projet/INFRASTRUCTURE/az_er/az_er_repository.dart';
 part 'add_insert_freezed_form_notifier.freezed.dart';
 
 @freezed
@@ -18,10 +18,7 @@ class AddAZERFormData with _$AddAZERFormData {
   }) = _AddAZERFormData;
 
   factory AddAZERFormData.initial() => AddAZERFormData(
-      azer: AZER.empty(),
-      showErrorMessages: false,
-      isSubmitting: false,
-      authFailureOrSuccessOption: none());
+      azer: AZER.empty(), showErrorMessages: false, isSubmitting: false, authFailureOrSuccessOption: none());
 }
 
 class AZERFormNotifier extends StateNotifier<AddAZERFormData> {
@@ -36,8 +33,7 @@ class AZERFormNotifier extends StateNotifier<AddAZERFormData> {
 
     //insert-valid-params
     if (false /* insert-valid-condition */) {
-      state = state.copyWith(
-          isSubmitting: true, authFailureOrSuccessOption: none());
+      state = state.copyWith(isSubmitting: true, authFailureOrSuccessOption: none());
 
       failureOrSuccess = await this._iAZERRepository.create(state.azer);
 
