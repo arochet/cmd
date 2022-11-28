@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:base_de_projet/PRESENTATION/core/_components/main_scaffold.dart';
+import 'package:base_de_projet/PRESENTATION/core/_components/show_component_file.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:base_de_projet/PRESENTATION/core/_core/theme_colors.dart';
 import 'package:base_de_projet/providers.dart';
@@ -11,10 +12,13 @@ class AZERPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainScaffold(
-      title: AppLocalizations.of(context)!.nomprojet,
-      child: Padding(
-        padding: EdgeInsets.all(10),
-        child: Text('insert-code'),
+      title: 'namefile',
+      child: ShowComponentFile(
+        title: 'pathfile',
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Text('insert-code'),
+        ),
       ),
     );
   }
