@@ -23,7 +23,7 @@ deleteSpace() {
 
 #Nom des fichiers
 nomDossier=`toUnderscore $1`
-nomFichier="$nomDossier.dart"
+nomFichier="${nomDossier}_page.dart"
 nomClasse=`toSpace $1`; nomClasse=$(for i in $nomClasse; do echo -n `capitalize $i`; done); 
 
 #Vérifie s'il on a le nom de la page
@@ -38,11 +38,20 @@ cheminFichierRef="$(dirname $0)/fichierdebase/nouvelleroute.dart"
 cheminRouter="./lib/PRESENTATION/core/_core/router.dart"
 codeRoute=`cat $cheminFichierRef | tr -d '\n'`
 codeRoute="$codeRoute //insert-route"
+codeImportRouter="import 'package:base_de_projet/PRESENTATION/$nomDossier/$nomFichier';"
+codeImportRouter="$codeImportRouter //insert-import"
 
 #Vérifie qu'il y a le insert-route
-he=`grep -c "//insert" $cheminRouter`
+he=`grep -c "//insert-route" $cheminRouter`
 if [ $he -eq "0" ]; then
     echo "/!\ Echec ! Pas de insert-route dans $cheminRouter"
+    exit 1
+fi
+
+#Vérifie qu'il y a le insert-import
+he=`grep -c "//insert-import" $cheminRouter`
+if [ $he -eq "0" ]; then
+    echo "/!\ Echec ! Pas de insert-import dans $cheminRouter"
     exit 1
 fi
 
@@ -50,6 +59,7 @@ fi
 he=`grep -c $nomClasse $cheminRouter`
 if [ $he -eq "0" ]; then
     #Ajout de la route
+    sed -i -e "s~//insert-import~$codeImportRouter~g" $cheminRouter
     sed -i -e "s~//insert-route~$codeRoute~g" $cheminRouter
     sed -i -e "s~AZER~$nomClasse~g" $cheminRouter
     sed -i -e "s~azer~$1~g" $cheminRouter
