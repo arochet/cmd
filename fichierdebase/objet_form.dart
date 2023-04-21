@@ -3,7 +3,7 @@ import 'package:base_de_projet/APPLICATION/auth/register_form_notifier.dart';
 import 'package:base_de_projet/PRESENTATION/auth/widget/flushbar_auth_failure.dart';
 import 'package:base_de_projet/APPLICATION/az_er/add_az_er_form_notifier.dart';
 import 'package:base_de_projet/PRESENTATION/core/_core/router.dart';
-import 'package:base_de_projet/PRESENTATION/core/_core/theme_button.dart';
+
 import 'package:base_de_projet/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +17,8 @@ class AZERFormProvider extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AddAZERFormData>(azerFormNotifierProvider, (prev, myRegisterState) {
+    ref.listen<AddAZERFormData>(azerFormNotifierProvider as ProviderListenable<AddTestFormData>,
+        (prev, myRegisterState) {
       myRegisterState.authFailureOrSuccessOption.fold(
           () {},
           (either) => either.fold((failure) {
@@ -63,7 +64,6 @@ class AZERForm extends ConsumerWidget {
               onPressed: () {
                 ref.read(azerFormNotifierProvider.notifier).addAZERPressed();
               },
-              style: buttonNormalConfirm,
               child: const Text("Ajout"),
             ),
           ),

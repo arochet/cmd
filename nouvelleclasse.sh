@@ -6,9 +6,13 @@ capitalize() {
     echo "$(tr '[:lower:]' '[:upper:]' <<< ${str:0:1})${str:1}"
 }
 
-lowercase() {
+firtLetterMaj() {
     str=$1
     echo "$(tr '[:upper:]' '[:lower:]' <<< ${str:0:1})${str:1}"
+}
+
+to_lowercase() {
+  echo "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 toUnderscore() {
@@ -44,9 +48,10 @@ classeToDTOParam() {
 
 #Nom des fichiers
 nomDossier=`toUnderscore $1`
+nomDossier=`to_lowercase $nomDossier`
 nomFichier="$nomDossier.dart"
 nomClasse=`toSpace $1`; nomClasse=$(for i in $nomClasse; do echo -n `capitalize $i`; done);
-nomObjet=`lowercase $nomClasse`
+nomObjet=`firtLetterMaj $nomClasse`
 
 #Vérifie les paramètres
 echo "Nouvelle objet en cours de création ..."
@@ -306,7 +311,7 @@ if [ $formulaireAjout = "y" ]; then
     mkdir "$nomDossier/${nomDossier}_add"
     nouvellepage.sh "$1-add" "./$nomDossier"
     code="${nomClasse}FormProvider()"
-    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/${nomDossier}_add.dart"
+    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/${nomDossier}_add_page.dart"
     sed -i -e "s~Text('insert-code')~$code~g" $chemin
     echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
 
@@ -345,7 +350,7 @@ fi
 # [PRESENTATION] AFFICHAGE LIST
 mkdir "$nomDossier/${nomDossier}_list"
 nouvellepage.sh "$1-list" "./$nomDossier"
-chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/${nomDossier}_list.dart"
+chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/${nomDossier}_list_page.dart"
 cat $(dirname $0)/fichierdebase/objet_list.dart > $chemin
 echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
 sed -i -e "s~AZER~$nomClasse~g" $chemin
@@ -375,7 +380,7 @@ do
             ;;
     esac
 
-    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.bodyText1),\n//insert-info"
+    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.bodyMedium),\n//insert-info"
     sed -i -e "s~//insert-info~$code~g" $fichierForm
 done
 sed -i -e "s~AZER~$nomClasse~g" $fichierForm
@@ -385,7 +390,7 @@ sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 # [PRESENTATION] AFFICHAGE DETAIL D'UN ELEMENT
 mkdir "$nomDossier/${nomDossier}_view"
 nouvellepage.sh "$1-view" "./$nomDossier"
-chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/${nomDossier}_view.dart"
+chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/${nomDossier}_view_page.dart"
 cat $(dirname $0)/fichierdebase/objet_view.dart > $chemin
 echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
 sed -i -e "s~AZER~$nomClasse~g" $chemin
@@ -415,7 +420,7 @@ do
             ;;
     esac
 
-    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.bodyText1),\n//insert-info"
+    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.labelLarge),\n//insert-info"
     sed -i -e "s~//insert-info~$code~g" $fichierForm
 done
 sed -i -e "s~AZER~$nomClasse~g" $fichierForm

@@ -6,6 +6,10 @@ capitalize() {
     echo "$(tr '[:lower:]' '[:upper:]' <<< ${str:0:1})${str:1}"
 }
 
+to_lowercase() {
+  echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
 toUnderscore() {
     str=$1
     echo "${str//-/_}"
@@ -21,9 +25,21 @@ deleteSpace() {
     echo "${str// /}"
 }
 
+is_string_greater_than_zero() {
+  if [ "${#1}" -gt 0 ]; then
+    echo "La chaîne \"$1\" est supérieure à 0."
+    return 0  # Succès
+  else
+    echo "La chaîne \"$1\" n'est pas supérieure à 0."
+    return 1  # Échec
+  fi
+}
+
+
 #Nom des fichiers
 nomDossier=`toUnderscore $1`
 nomFichier="${nomDossier}_page.dart"
+nomFichier=`to_lowercase $nomFichier` #Nom du fichier en minuscule 
 nomClasse=`toSpace $1`; nomClasse=$(for i in $nomClasse; do echo -n `capitalize $i`; done); 
 
 #Vérifie s'il on a le nom de la page
@@ -33,12 +49,21 @@ if [ $# -ne "1" ] && [ $# -ne "2" ]; then
     exit 1
 fi
 
+#Chemin du fichier
+cheminFichier=""
+if is_string_greater_than_zero $2; then
+    echo "oui"
+    cheminFichier="$2/"
+else
+    echo "bah non"
+fi
+
 #AJOUT DU ROUTER
 cheminFichierRef="$(dirname $0)/fichierdebase/nouvelleroute.dart"
 cheminRouter="./lib/PRESENTATION/core/_core/router.dart"
 codeRoute=`cat $cheminFichierRef | tr -d '\n'`
 codeRoute="$codeRoute //insert-route"
-codeImportRouter="import 'package:base_de_projet/PRESENTATION/$nomDossier/$nomFichier';"
+codeImportRouter="import 'package:base_de_projet/PRESENTATION/$cheminFichier$nomDossier/$nomFichier';"
 codeImportRouter="$codeImportRouter //insert-import"
 
 #Vérifie qu'il y a le insert-route
