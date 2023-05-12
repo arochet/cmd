@@ -109,7 +109,6 @@ cat $cheminNouvellePageRef > "$cheminPage/$nomFichier"
 sed -i -e "s~AZER~$nomClasse~g" "$cheminPage/$nomFichier"
 sed -i -e "s~nouvelle-page~$nomClasse~g" "$cheminPage/$nomFichier"
 sed -i -e "s~namefile~$nomClasse~g" "$cheminPage/$nomFichier"
-sed -i -e "s~pathfile~$cheminPage/$nomFichier~g" "$cheminPage/$nomFichier"
 echo "Ajout du code dans la page principale"
 
 #Nettoyage

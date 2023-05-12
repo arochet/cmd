@@ -15,7 +15,6 @@ class AZERPage extends StatelessWidget {
     return MainScaffold(
       title: 'namefile',
       child: ShowComponentFile(
-        title: 'pathfile',
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Text('insert-code'),

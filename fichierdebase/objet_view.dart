@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:base_de_projet/PRESENTATION/core/_components/app_async.dart';
+import 'package:base_de_projet/PRESENTATION/core/_components/app_error.dart';
 import 'package:base_de_projet/DOMAIN/core/value_objects.dart';
 import 'widget/panel_az_er_view.dart';
 import 'package:base_de_projet/PRESENTATION/core/_components/main_scaffold.dart';
@@ -30,11 +31,8 @@ class AZERViewPage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           AppAsync(ref.watch(oneAZERProvider(id)),
-              builder: (data) => data!.fold(
-                  (error) => Center(
-                        child: Text("Unknown Failure", style: Theme.of(context).textTheme.headlineMedium),
-                      ),
-                  (azer) => PanelAZERView(azer: azer))),
+              builder: (data) => data!
+                  .fold((error) => AppError(message: error.toString()), (azer) => PanelAZERView(azer: azer))),
           SpaceH10(),
           ElevatedButton(
             onPressed: () {
