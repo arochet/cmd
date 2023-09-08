@@ -17,8 +17,7 @@ class AZERFormProvider extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<AddAZERFormData>(azerFormNotifierProvider as ProviderListenable<AddTestFormData>,
-        (prev, myRegisterState) {
+    ref.listen<AddAZERFormData>(azerFormNotifierProvider, (prev, myRegisterState) {
       myRegisterState.authFailureOrSuccessOption.fold(
           () {},
           (either) => either.fold((failure) {
