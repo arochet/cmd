@@ -462,9 +462,10 @@ rm -f ./lib/*.dart-e
 
 echo "##################################################"
 echo "1. Changez 'base_de_projet' par le nom du projet"
-echo "2. Faire les imports dans presentation/core/_core/router"
-echo "3. lancer la commande gogo (flutter build runner)"
-echo "4. Faire les imports dans provider.dart"
+echo "2. Faire les imports dans provider"
+echo "3. lancer la commande 'dart run'"
+echo "4. Faire les imports dans presentation/core/_core/router"
+echo "5. Faire les imports dans provider.dart"
 echo "##################################################"
 
 #flutter pub run build_runner build --delete-conflicting-outputs
