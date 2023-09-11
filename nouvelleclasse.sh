@@ -242,190 +242,194 @@ fi
 ########     APPLICATION    #########
 
 # [APPLICATION] CREATION FORMULAIRE AJOUT
+read -p 'Voulez vous ajouter une page ? (y: oui) ' pageAjout
 read -p 'Voulez vous ajouter un formulaire d ajout ? (y: oui) ' formulaireAjout
-if [ $formulaireAjout = "y" ]; then
-    nomFichierAddObjetNotifier="add_${nomDossier}_form_notifier.dart"
-    cheminPageApplication="./lib/APPLICATION/$nomDossier"
-    mkdir -vp $cheminPageApplication
-    touch "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-    cat $(dirname $0)/fichierdebase/add_objet_form_notifier.dart > "$cheminPageApplication/$nomFichierAddObjetNotifier"
-    sed -i -e "s~AZER~$nomClasse~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-    sed -i -e "s~azer~$nomObjet~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-    sed -i -e "s~az_er~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-    sed -i -e "s~insert_freezed~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+if [ $pageAjout = "y" ]; then
+    if [ $formulaireAjout = "y" ]; then
+        nomFichierAddObjetNotifier="add_${nomDossier}_form_notifier.dart"
+        cheminPageApplication="./lib/APPLICATION/$nomDossier"
+        mkdir -vp $cheminPageApplication
+        touch "$cheminPageApplication/$nomFichierAddObjetNotifier"
+
+        cat $(dirname $0)/fichierdebase/add_objet_form_notifier.dart > "$cheminPageApplication/$nomFichierAddObjetNotifier"
+        sed -i -e "s~AZER~$nomClasse~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+        sed -i -e "s~azer~$nomObjet~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+        sed -i -e "s~az_er~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+        sed -i -e "s~insert_freezed~$nomDossier~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
 
-    # Ajout d'un système 
+        # Ajout d'un système 
+        for i in "${listParams[@]}"
+        do
+            #Code paramChanged(String param)
+            parametre=`toSpace $i`
+            array=($parametre)
+            typevariableparametre=`classeToDTOParam ${array[0]}`
+            valueChanged=${array[0]}
+            case ${array[0]} in 
+                "String" | "int")
+                    valueChanged="param"
+                    ;;
+                "Nom" | "Description" | "EmailAddress" | "Password")
+                    valueChanged="${array[0]}(param)"
+                    ;;
+                "UniqueId")
+                    valueChanged="UniqueId.fromUniqueString(param)"
+                    ;;
+                "DateTime")
+                    valueChanged="DateTime.fromMillisecondsSinceEpoch(param)"
+                    ;;
+                "State")
+                    valueChanged="State.fromString(param)"
+                    ;;
+                *)
+                    valueChanged="${array[0]}(param)"
+                    ;;
+            esac
+            paramChanged="${array[1]}Changed($typevariableparametre param) {state = state.copyWith($nomObjet: state.$nomObjet.copyWith(${array[1]}: $valueChanged),authFailureOrSuccessOption: none());}\n//insert-changed"
+            sed -i -e "s~//insert-changed~$paramChanged~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+
+            #final isTitreValid = state.maGazolina.titre.isValid();
+            if [ ${array[0]} = "Nom" ] || [ ${array[0]} = "Description" ] || [ ${array[0]} = "EmailAddress" ] || [ ${array[0]} = "Password" ]; then
+                codeParamValid="final is${array[1]}Valid = state.$nomObjet.${array[1]}.isValid();\n//insert-valid-params"
+                codeCondition="/* insert-valid-condition */ || is${array[1]}Valid"
+                sed -i -e "s~//insert-valid-params~$codeParamValid~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+                sed -i -e "s~/\* insert-valid-condition \*/~$codeCondition~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
+            fi
+        done
+
+        echo "Creation de $cheminPageApplication/$nomFichierAddObjetNotifier"
+    fi
+
+
+
+
+
+    ########     PRESENTATION    #########
+
+    mkdir $nomDossier
+    # [PRESENTATION] FORM D'AJOUT
+    if [ $formulaireAjout = "y" ]; then
+        mkdir "$nomDossier/${nomDossier}_add"
+        nouvellepage.sh "$1-add" "./$nomDossier"
+        code="${nomClasse}FormProvider()"
+        chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/${nomDossier}_add_page.dart"
+        sed -i -e "s~Text('insert-code')~$code~g" $chemin
+        echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
+
+        # Formulaire
+        fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
+        touch $fichierForm
+        cat $(dirname $0)/fichierdebase/objet_form.dart > $fichierForm
+        for i in "${listParams[@]}"
+        do
+            #Code paramChanged(String param)
+            parametre=`toSpace $i`
+            array=($parametre)
+            typevariableparametre=`classeToDTOParam ${array[0]}`
+
+            case ${array[0]} in 
+                "String" | "int" | "UniqueId" | "DateTime")
+                    ;;
+                *)
+                    code=`cat $(dirname $0)/fichierdebase/objet_form_field.dart`
+                    KEYWORD="//insert-field-complete"
+                    ESCAPED_KEYWORD=$(printf '%s\n' "$KEYWORD" | sed -e 's/[]\/$*.^[]/\\&/g');
+                    ESCAPED_REPLACE=$(printf '%s\n' "$code" | sed -e 's/[]\/$*.^[]/\\&/g');
+                    ESCAPED_REPLACE="${ESCAPED_REPLACE//[$'\t\r\n']}"
+                    sed -i -e "s/$ESCAPED_KEYWORD/$ESCAPED_REPLACE/g" $fichierForm
+                    sed -i -e "s~insert-field-name~${array[1]}~g" $fichierForm
+                    ;;
+            esac
+        done
+        sed -i -e "s~AZER~$nomClasse~g" $fichierForm
+        sed -i -e "s~azer~$nomObjet~g" $fichierForm
+        sed -i -e "s~az_er~$nomDossier~g" $fichierForm
+
+        echo "Creation de $fichierForm"
+    fi
+
+    # [PRESENTATION] AFFICHAGE LIST
+    mkdir "$nomDossier/${nomDossier}_list"
+    nouvellepage.sh "$1-list" "./$nomDossier"
+    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/${nomDossier}_list_page.dart"
+    cat $(dirname $0)/fichierdebase/objet_list.dart > $chemin
+    echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
+    sed -i -e "s~AZER~$nomClasse~g" $chemin
+    sed -i -e "s~azer~$nomObjet~g" $chemin
+    sed -i -e "s~az_er~$nomDossier~g" $chemin
+
+    # List
+    fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/widget/panel_${nomDossier}_view.dart"
+    touch $fichierForm
+    cat $(dirname $0)/fichierdebase/panel_objet_view_compact.dart > $fichierForm
+
     for i in "${listParams[@]}"
     do
-        #Code paramChanged(String param)
         parametre=`toSpace $i`
         array=($parametre)
-        typevariableparametre=`classeToDTOParam ${array[0]}`
-        valueChanged=${array[0]}
-        case ${array[0]} in 
-            "String" | "int")
-                valueChanged="param"
-                ;;
-            "Nom" | "Description" | "EmailAddress" | "Password")
-                valueChanged="${array[0]}(param)"
-                ;;
-            "UniqueId")
-                valueChanged="UniqueId.fromUniqueString(param)"
+
+        objget="variable.getOrCrash()"
+        case ${array[0]} in
+            "String" | "int" )
+                objget="${array[1]}"
                 ;;
             "DateTime")
-                valueChanged="DateTime.fromMillisecondsSinceEpoch(param)"
-                ;;
-            "State")
-                valueChanged="State.fromString(param)"
+                objget="${array[1]}.toString()"
                 ;;
             *)
-                valueChanged="${array[0]}(param)"
+                objget="${array[1]}.getOrCrash()"
                 ;;
         esac
-        paramChanged="${array[1]}Changed($typevariableparametre param) {state = state.copyWith($nomObjet: state.$nomObjet.copyWith(${array[1]}: $valueChanged),authFailureOrSuccessOption: none());}\n//insert-changed"
-        sed -i -e "s~//insert-changed~$paramChanged~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
 
-        #final isTitreValid = state.maGazolina.titre.isValid();
-        if [ ${array[0]} = "Nom" ] || [ ${array[0]} = "Description" ] || [ ${array[0]} = "EmailAddress" ] || [ ${array[0]} = "Password" ]; then
-            codeParamValid="final is${array[1]}Valid = state.$nomObjet.${array[1]}.isValid();\n//insert-valid-params"
-            codeCondition="/* insert-valid-condition */ || is${array[1]}Valid"
-            sed -i -e "s~//insert-valid-params~$codeParamValid~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-            sed -i -e "s~/\* insert-valid-condition \*/~$codeCondition~g" "$cheminPageApplication/$nomFichierAddObjetNotifier"
-        fi
-    done
-
-    echo "Creation de $cheminPageApplication/$nomFichierAddObjetNotifier"
-fi
-
-
-
-
-
-########     PRESENTATION    #########
-
-mkdir $nomDossier
-# [PRESENTATION] FORM D'AJOUT
-if [ $formulaireAjout = "y" ]; then
-    mkdir "$nomDossier/${nomDossier}_add"
-    nouvellepage.sh "$1-add" "./$nomDossier"
-    code="${nomClasse}FormProvider()"
-    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/${nomDossier}_add_page.dart"
-    sed -i -e "s~Text('insert-code')~$code~g" $chemin
-    echo "import 'widget/${nomDossier}_form.dart';" | cat - $chemin > temp && mv temp $chemin
-
-    # Formulaire
-    fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_add/widget/${nomDossier}_form.dart"
-    touch $fichierForm
-    cat $(dirname $0)/fichierdebase/objet_form.dart > $fichierForm
-    for i in "${listParams[@]}"
-    do
-        #Code paramChanged(String param)
-        parametre=`toSpace $i`
-        array=($parametre)
-        typevariableparametre=`classeToDTOParam ${array[0]}`
-
-        case ${array[0]} in 
-            "String" | "int" | "UniqueId" | "DateTime")
-                ;;
-            *)
-                code=`cat $(dirname $0)/fichierdebase/objet_form_field.dart`
-                KEYWORD="//insert-field-complete"
-                ESCAPED_KEYWORD=$(printf '%s\n' "$KEYWORD" | sed -e 's/[]\/$*.^[]/\\&/g');
-                ESCAPED_REPLACE=$(printf '%s\n' "$code" | sed -e 's/[]\/$*.^[]/\\&/g');
-                ESCAPED_REPLACE="${ESCAPED_REPLACE//[$'\t\r\n']}"
-                sed -i -e "s/$ESCAPED_KEYWORD/$ESCAPED_REPLACE/g" $fichierForm
-                sed -i -e "s~insert-field-name~${array[1]}~g" $fichierForm
-                ;;
-        esac
+        code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.bodyMedium),\n//insert-info"
+        sed -i -e "s~//insert-info~$code~g" $fichierForm
     done
     sed -i -e "s~AZER~$nomClasse~g" $fichierForm
     sed -i -e "s~azer~$nomObjet~g" $fichierForm
     sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 
-    echo "Creation de $fichierForm"
+    # [PRESENTATION] AFFICHAGE DETAIL D'UN ELEMENT
+    mkdir "$nomDossier/${nomDossier}_view"
+    nouvellepage.sh "$1-view" "./$nomDossier"
+    chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/${nomDossier}_view_page.dart"
+    cat $(dirname $0)/fichierdebase/objet_view.dart > $chemin
+    echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
+    sed -i -e "s~AZER~$nomClasse~g" $chemin
+    sed -i -e "s~azer~$nomObjet~g" $chemin
+    sed -i -e "s~az_er~$nomDossier~g" $chemin
+
+    # view
+    fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/widget/panel_${nomDossier}_view.dart"
+    touch $fichierForm
+    cat $(dirname $0)/fichierdebase/panel_objet_view_detail.dart > $fichierForm
+
+    for i in "${listParams[@]}"
+    do
+        parametre=`toSpace $i`
+        array=($parametre)
+
+        objget="variable.getOrCrash()"
+        case ${array[0]} in
+            "String" | "int" )
+                objget="${array[1]}"
+                ;;
+            "DateTime")
+                objget="${array[1]}.toString()"
+                ;;
+            *)
+                objget="${array[1]}.getOrCrash()"
+                ;;
+        esac
+
+        code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.labelLarge),\n//insert-info"
+        sed -i -e "s~//insert-info~$code~g" $fichierForm
+    done
+    sed -i -e "s~AZER~$nomClasse~g" $fichierForm
+    sed -i -e "s~azer~$nomObjet~g" $fichierForm
+    sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 fi
-
-# [PRESENTATION] AFFICHAGE LIST
-mkdir "$nomDossier/${nomDossier}_list"
-nouvellepage.sh "$1-list" "./$nomDossier"
-chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/${nomDossier}_list_page.dart"
-cat $(dirname $0)/fichierdebase/objet_list.dart > $chemin
-echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
-sed -i -e "s~AZER~$nomClasse~g" $chemin
-sed -i -e "s~azer~$nomObjet~g" $chemin
-sed -i -e "s~az_er~$nomDossier~g" $chemin
-
-# List
-fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_list/widget/panel_${nomDossier}_view.dart"
-touch $fichierForm
-cat $(dirname $0)/fichierdebase/panel_objet_view_compact.dart > $fichierForm
-
-for i in "${listParams[@]}"
-do
-    parametre=`toSpace $i`
-    array=($parametre)
-
-    objget="variable.getOrCrash()"
-    case ${array[0]} in
-        "String" | "int" )
-            objget="${array[1]}"
-            ;;
-        "DateTime")
-            objget="${array[1]}.toString()"
-            ;;
-        *)
-            objget="${array[1]}.getOrCrash()"
-            ;;
-    esac
-
-    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.bodyMedium),\n//insert-info"
-    sed -i -e "s~//insert-info~$code~g" $fichierForm
-done
-sed -i -e "s~AZER~$nomClasse~g" $fichierForm
-sed -i -e "s~azer~$nomObjet~g" $fichierForm
-sed -i -e "s~az_er~$nomDossier~g" $fichierForm
-
-# [PRESENTATION] AFFICHAGE DETAIL D'UN ELEMENT
-mkdir "$nomDossier/${nomDossier}_view"
-nouvellepage.sh "$1-view" "./$nomDossier"
-chemin="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/${nomDossier}_view_page.dart"
-cat $(dirname $0)/fichierdebase/objet_view.dart > $chemin
-echo "import 'widget/panel_${nomDossier}_view.dart';" | cat - $chemin > temp && mv temp $chemin
-sed -i -e "s~AZER~$nomClasse~g" $chemin
-sed -i -e "s~azer~$nomObjet~g" $chemin
-sed -i -e "s~az_er~$nomDossier~g" $chemin
-
-# view
-fichierForm="./lib/PRESENTATION/$nomDossier/${nomDossier}_view/widget/panel_${nomDossier}_view.dart"
-touch $fichierForm
-cat $(dirname $0)/fichierdebase/panel_objet_view_detail.dart > $fichierForm
-
-for i in "${listParams[@]}"
-do
-    parametre=`toSpace $i`
-    array=($parametre)
-
-    objget="variable.getOrCrash()"
-    case ${array[0]} in
-        "String" | "int" )
-            objget="${array[1]}"
-            ;;
-        "DateTime")
-            objget="${array[1]}.toString()"
-            ;;
-        *)
-            objget="${array[1]}.getOrCrash()"
-            ;;
-    esac
-
-    code="Text(\"${array[1]} : \$\{azer.${objget}\}\", style: Theme.of(context).textTheme.labelLarge),\n//insert-info"
-    sed -i -e "s~//insert-info~$code~g" $fichierForm
-done
-sed -i -e "s~AZER~$nomClasse~g" $fichierForm
-sed -i -e "s~azer~$nomObjet~g" $fichierForm
-sed -i -e "s~az_er~$nomDossier~g" $fichierForm
 
 ########     PROVIDER    #########
 hee=`grep -c $nomObjet ./lib/providers.dart`
@@ -465,7 +469,6 @@ echo "1. Changez 'base_de_projet' par le nom du projet"
 echo "2. Faire les imports dans provider"
 echo "3. lancer la commande 'dart run'"
 echo "4. Faire les imports dans presentation/core/_core/router"
-echo "5. Faire les imports dans provider.dart"
 echo "##################################################"
 
 #flutter pub run build_runner build --delete-conflicting-outputs
